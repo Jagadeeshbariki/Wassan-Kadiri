@@ -1,4 +1,3 @@
-
 import { Product } from '../types';
 
 // Mock data
@@ -35,6 +34,14 @@ export const productService = {
       setTimeout(() => {
         mockProducts = mockProducts.map(p => p.id === productData.id ? productData : p);
         resolve(productData);
+      }, 300);
+    });
+  },
+  deleteProduct: (productId: string): Promise<void> => {
+    return new Promise(resolve => {
+      setTimeout(() => {
+        mockProducts = mockProducts.filter(p => p.id !== productId);
+        resolve();
       }, 300);
     });
   }

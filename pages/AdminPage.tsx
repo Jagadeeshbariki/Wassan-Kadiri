@@ -1,10 +1,9 @@
-
 import React, { useState, FormEvent } from 'react';
 import { useProducts } from '../hooks/useProducts';
 import { Product } from '../types';
 
 const AdminPage = () => {
-  const { products, addProduct, updateProduct, loading } = useProducts();
+  const { products, addProduct, updateProduct, loading, deleteProduct } = useProducts();
   const [newProduct, setNewProduct] = useState({ name: '', description: '', price: '0', category: 'Vegetable' as Product['category'], stock: '0' });
   const [imageFile, setImageFile] = useState<File | null>(null);
 
@@ -52,7 +51,17 @@ const AdminPage = () => {
     } catch (error) {
         alert("Failed to update stock.");
     }
-  }
+  };
+
+  const handleDeleteProduct = async (productId: string, productName: string) => {
+    if (window.confirm(`Are you sure you want to delete "${productName}"?`)) {
+      try {
+        await deleteProduct(productId);
+      } catch (error) {
+        alert('Failed to delete product.');
+      }
+    }
+  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -104,7 +113,7 @@ const AdminPage = () => {
                         <p className="text-sm text-gray-500">{product.category}</p>
                     </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-3">
                   <label className="text-sm">Stock:</label>
                   <input 
                     type="number" 
@@ -113,6 +122,15 @@ const AdminPage = () => {
                     className="w-20 border border-gray-300 rounded-md p-1 text-center"
                     min="0"
                   />
+                  <button 
+                    onClick={() => handleDeleteProduct(product.id, product.name)}
+                    className="text-red-500 hover:text-red-700 p-2 rounded-full hover:bg-red-100 transition-colors"
+                    aria-label={`Delete ${product.name}`}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clipRule="evenodd" />
+                    </svg>
+                  </button>
                 </div>
               </div>
             ))}

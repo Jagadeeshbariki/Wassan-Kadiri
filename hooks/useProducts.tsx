@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useContext, useEffect, ReactNode, useCallback } from 'react';
 import { Product } from '../types';
 import { productService } from '../services/productService';
@@ -9,6 +8,7 @@ interface ProductContextType {
   error: string | null;
   addProduct: (productData: Omit<Product, 'id'>) => Promise<void>;
   updateProduct: (product: Product) => Promise<void>;
+  deleteProduct: (productId: string) => Promise<void>;
 }
 
 const ProductContext = createContext<ProductContextType | undefined>(undefined);
@@ -45,9 +45,14 @@ export const ProductProvider: React.FC<{children: ReactNode}> = ({ children }) =
     setProducts(prev => prev.map(p => p.id === updatedProduct.id ? updatedProduct : p));
   };
 
+  const deleteProduct = async (productId: string) => {
+    await productService.deleteProduct(productId);
+    setProducts(prev => prev.filter(p => p.id !== productId));
+  };
+
 
   return (
-    <ProductContext.Provider value={{ products, loading, error, addProduct, updateProduct }}>
+    <ProductContext.Provider value={{ products, loading, error, addProduct, updateProduct, deleteProduct }}>
       {children}
     </ProductContext.Provider>
   );
